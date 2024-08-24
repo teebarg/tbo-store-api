@@ -23,7 +23,8 @@
     "seed": "cross-env medusa seed -f ./data/seed.json",
     "start": "cross-env npm run build && medusa start",
     "start:custom": "cross-env npm run build && node --preserve-symlinks --trace-warnings index.js",
-    "dev": "cross-env npm run build:server && medusa develop"
+    "dev": "cross-env npm run build:server && medusa develop",
+    "prepare": "husky"
   },
   "dependencies": {
     "@medusajs/admin": "^7.1.15",
@@ -59,6 +60,8 @@
     "babel-preset-medusa-package": "^1.1.19",
     "cross-env": "^7.0.3",
     "eslint": "^6.8.0",
+    "husky": "^9.1.5",
+    "prettier": "^2.8.8",
     "jest": "^27.3.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.7",
@@ -93,5 +96,13 @@
   },
   "resolutions": {
     "glob": "^7.1.6"
-  }
+  },
+  "lint-staged": {
+        "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+            "prettier --write"
+        ],
+        "src/**/*.{js,jsx,ts,tsx,json}": [
+            "eslint --max-warnings=0 --fix"
+        ]
+    }
 }
