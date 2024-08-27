@@ -35,9 +35,11 @@ const plugins = [
     `medusa-fulfillment-manual`,
     `medusa-payment-manual`,
     {
-        resolve: `@medusajs/file-local`,
+        resolve: `medusa-firebase`,
         options: {
-            upload_dir: "uploads",
+            service_account_key: process.env.FIREBASE_CRED,
+            bucket_name: process.env.STORAGE_BUCKET,
+            upload_dir: process.env.UPLOAD_DIR || "uploads",
         },
     },
     {
@@ -70,21 +72,43 @@ const plugins = [
             },
         },
     },
+    {
+        resolve: `medusa-plugin-slack-notification`,
+        options: {
+            show_discount_code: false, // optional, whether the discount code should be shown in notifications
+            slack_url: process.env.SLACK_WEBHOOK_URL,
+            admin_orders_url: process.env.SLACK_ADMIN_ORDERS_URL, // for example, http://localhost:7001/a/orders
+        },
+    },
+    {
+        resolve: `medusa-plugin-sendgrid`,
+        options: {
+            api_key: process.env.SENDGRID_API_KEY,
+            from: process.env.SENDGRID_FROM,
+            order_placed_template: process.env.SENDGRID_ORDER_PLACED_ID,
+            localization: {
+                "de-DE": {
+                    // locale key
+                    order_placed_template: process.env.SENDGRID_ORDER_PLACED_ID_LOCALIZED,
+                },
+            },
+        },
+    },
 ];
 
 const modules = {
-    /*eventBus: {
-    resolve: "@medusajs/event-bus-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },
-  cacheService: {
-    resolve: "@medusajs/cache-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },*/
+    eventBus: {
+        resolve: "@medusajs/event-bus-redis",
+        options: {
+            redisUrl: REDIS_URL,
+        },
+    },
+    cacheService: {
+        resolve: "@medusajs/cache-redis",
+        options: {
+            redisUrl: REDIS_URL,
+        },
+    },
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule["projectConfig"]} */
