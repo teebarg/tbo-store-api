@@ -1,0 +1,194 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 150px;
+        }
+
+        .order-summary {
+            background-color: #f8f9fa;
+            border-radius:
+                5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .order-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .order-items th,
+        .order-items td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .order-items th {
+            background-color: #e9ecef;
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .order-totals {
+            margin-top: 20px;
+        }
+        .order-totals table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .order-totals td {
+            padding: 5px;
+        }
+        .order-totals .total {
+            font-weight: bold;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color:
+                #7f8c8d;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://via.placeholder.com/150x50?text=Your+Logo" alt="Company Logo" />
+        </div>
+        <h1>Order Confirmation</h1>
+        <p>Dear {{customerName}},</p>
+        <p>Thank you for your order! We're pleased to confirm that we've received your order and it's being processed.
+        </p>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <p><strong>Order Number:</strong> {{orderNumber}}</p>
+            <p><strong>Order Date:</strong> {{orderDate}}</p>
+
+            <table class="order-items">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td><img src="{{this.thumbnail}}" alt="{{this.title}}" class="product-image"></td>
+                        <td>{{this.title}}</td>
+                        <td>{{this.quantity}}</td>
+                        <td>₦{{formatMoney this.unit_price}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+
+            <div class="order-totals">
+                <table>
+                    <tr>
+                        <td>Subtotal:</td>
+                        <td align="right">₦{{formatMoney subtotal}}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount:</td>
+                        <td align="right">-₦{{formatMoney discount}}</td>
+                    </tr>
+                    <tr>
+                        <td>Taxes:</td>
+                        <td align="right">₦{{formatMoney taxes}}</td>
+                    </tr>
+                    <tr>
+                        <td>Delivery Fee:</td>
+                        <td align="right">₦{{formatMoney deliveryFee}}</td>
+                    </tr>
+                    <tr class="total">
+                        <td>Total:</td>
+                        <td align="right">₦{{formatMoney orderTotal}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <h2>Shipping Information</h2>
+        <p>
+            {{shippingAddress.first_name}} {{shippingAddress.last_name}}<br />
+            {{shippingAddress.address_1}}<br />
+            {{shippingAddress.city}},
+            {{shippingAddress.province}}
+            {{shippingAddress.postal_code}}<br />
+            Nigeria
+        </p>
+
+        <p><strong>Delivery Method:</strong> {{deliveryMethod}}</p>
+
+        <p>We'll send you another email when your order has been shipped.</p>
+
+        <a href="{{orderTrackingLink}}" class="button">Track Your Order</a>
+
+        <p>If you have any questions about your order, please don't hesitate to contact our customer service team.</p>
+
+        <p>Thank you for shopping with us!</p>
+
+        <p>Best regards,<br />The {{companyName}} Team</p>
+    </div>
+    <div class="footer">
+        <p>This email was sent to {{customerEmail}}. If you have any questions, please contact our support team.</p>
+        <p>&copy; {{currentYear}} {{companyName}}. All rights reserved.</p>
+    </div>
+</body>
+
+</html>
