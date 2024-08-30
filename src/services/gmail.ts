@@ -1,9 +1,22 @@
-import { AbstractNotificationService, UserService, OrderService, CartService } from "@medusajs/medusa";
+import { AbstractNotificationService, UserService, OrderService, CartService, CustomerService } from "@medusajs/medusa";
 import { EntityManager } from "typeorm";
 import nodemailer from "nodemailer";
 import Handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
+
+const dir = process.env.TEMPLATE_PATH || "./email_templates";
+
+// Register partials
+const headerTemplate = fs.readFileSync(path.join(dir, "partials", "header.hbs"), "utf8");
+const footerTemplate = fs.readFileSync(path.join(dir, "partials", "footer.hbs"), "utf8");
+
+Handlebars.registerPartial("header", headerTemplate);
+Handlebars.registerPartial("footer", footerTemplate);
+
+// Register layout
+const layoutTemplate = fs.readFileSync(path.join(dir, "layouts", "main.hbs"), "utf8");
+Handlebars.registerPartial("main", layoutTemplate);
 
 Handlebars.registerHelper("formatMoney", function (value) {
     // Divide by 100 and format with commas
@@ -14,16 +27,17 @@ Handlebars.registerHelper("formatMoney", function (value) {
 });
 
 class EmailSenderService extends AbstractNotificationService {
-    static identifier = "gmail";
+    static readonly identifier = "gmail";
     protected manager_: EntityManager;
     protected transactionManager_: EntityManager;
 
     private transporter: nodemailer.Transporter;
-    private templateDir_: nodemailer.Transporter;
+    private templateDir_: string;
 
     protected userService: UserService;
     protected orderService: OrderService;
     protected cartService: CartService;
+    protected customerService: CustomerService;
 
     constructor(container: any, options: any) {
         super(container, options);
@@ -39,6 +53,7 @@ class EmailSenderService extends AbstractNotificationService {
         this.userService = container.userService;
         this.orderService = container.orderService;
         this.cartService = container.cartService;
+        this.customerService = container.customerService;
     }
 
     async sendNotification(
@@ -69,10 +84,8 @@ class EmailSenderService extends AbstractNotificationService {
 
         if (event === "order.placed") {
             const order = await this.orderService.retrieve(data.id);
-            const user = await this.userService.retrieveByEmail(order.email);
+            const user = await this.customerService.retrieve(order.customer_id);
             const cart = await this.cartService.retrieveWithTotals(order.cart_id);
-
-            console.log("🚀 ~ cart-order:", cart);
             const emailData = {
                 customerName: user?.first_name,
                 orderNumber: order.id,
@@ -95,7 +108,25 @@ class EmailSenderService extends AbstractNotificationService {
 
             const htmlContent = await this.getHtmlContent(`order-placed.hbs`, emailData);
 
-            return await this.sendEmail(user.email, "New Order Notification", htmlContent, emailData);
+            return await this.sendEmail(order.email, "New Order Notification", htmlContent, emailData);
+        }
+
+        if (event === "customer.created") {
+            const emailData = {
+                to: data.email,
+                storeName: process.env.COMPANY,
+                customerName: `${data.first_name} ${data.last_name}`,
+                storeUrl: process.env.STORE_FRONT,
+                customerEmail: data.email,
+                facebookUrl: "https://www.facebook.com/fashionhub",
+                instagramUrl: "https://www.instagram.com/fashionhub",
+                twitterUrl: "https://www.twitter.com/fashionhub",
+                currentYear: new Date().getFullYear(),
+            };
+
+            const htmlContent = await this.getHtmlContent(`customer-created.hbs`, emailData);
+
+            return await this.sendEmail(data.email, `Welcome to ${process.env.COMPANY} store`, htmlContent, emailData);
         }
     }
 

@@ -5,4 +5,5 @@ export default async (container: MedusaContainer): Promise<void> => {
 
     notificationService.subscribe("order.placed", "gmail");
     notificationService.subscribe("user.password_reset", "gmail");
+    notificationService.subscribe("customer.created", "gmail");
 };
