@@ -1,0 +1,145 @@
+{{!--
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Our Store!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 150px;
+        }
+
+        .welcome-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .benefits {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .benefits ul {
+            padding-left: 20px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #3498db;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .social-links {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://via.placeholder.com/150x50?text=Your+Logo" alt="Store Logo">
+        </div>
+
+        <img src="https://via.placeholder.com/600x200?text=Welcome+Image" alt="Welcome" class="welcome-image"> --}}
+
+        {{> header emailSubject="Welcome to Our Store!"}}
+
+{{!-- {{> main title="New Contact Form Submission" headerTitle="New Contact Form Submission"}} --}}
+
+<h1>Welcome to {{storeName}}, {{customerName}}!</h1>
+
+<p>We're thrilled to have you join our community of savvy shoppers. Your account is now active and ready for you to start exploring our amazing
+    collection of products.</p>
+
+<div class="benefits">
+    <h2>Your Account Benefits:</h2>
+    <ul>
+        <li>Exclusive access to member-only deals and promotions</li>
+        <li>Easy order tracking and history</li>
+        <li>Personalized product recommendations</li>
+        <li>Faster checkout process</li>
+    </ul>
+</div>
+
+<p>To get started, why not browse our latest collections or check out our current deals?</p>
+
+<a href="{{storeUrl}}" class="cta-button">Start Shopping Now</a>
+
+<p>If you have any questions or need assistance, our customer support team is always here to help. Just reply to this email or contact us through our
+    website.</p>
+
+<p>Happy shopping!</p>
+
+<p>Best regards,<br>The {{storeName}} Team</p>
+
+{{!-- {{> main}} --}}
+
+        {{> footer}}
+
+        {{!-- <div class="social-links">
+            <a href="{{facebookUrl}}">Facebook</a>
+            <a href="{{instagramUrl}}">Instagram</a>
+            <a href="{{twitterUrl}}">Twitter</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>This email was sent to {{customerEmail}}. If you didn't create an account with {{storeName}}, please ignore this email.</p>
+        <p>&copy; {{currentYear}} {{storeName}}. All rights reserved.</p>
+    </div>
+</body>
+
+</html> --}}
