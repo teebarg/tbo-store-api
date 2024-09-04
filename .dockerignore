@@ -1,0 +1,54 @@
+# Ignore version control files
+.git
+.gitignore
+
+# Ignore node modules
+node_modules
+
+# Ignore build artifacts
+dist
+build
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore log files
+*.log
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore editor specific files
+.vscode
+.idea
+
+# Ignore test files
+__tests__
+*.test.js
+*.spec.js
+
+# Ignore documentation
+docs
+*.md
+
+# Ignore Docker related files (except Dockerfile and docker-compose.yml)
+.dockerignore
+
+# Ignore npm debug logs
+npm-debug.log*
+
+# Ignore yarn integrity file
+.yarn-integrity
+
+# Ignore coverage directory
+coverage
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore admin source files (we only need the build)
+admin/src
+admin/public
