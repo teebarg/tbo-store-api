@@ -14,4 +14,4 @@ RUN npm install
 COPY . .
 
 # Expose the ports the app runs on
-EXPOSE 9000 7000 7001
+EXPOSE 7000 7001 9000

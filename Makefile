@@ -1,5 +1,3 @@
-# Makefile for Medusa Project
-
 # Variables
 DOCKER_COMPOSE = docker compose
 NODE = node
@@ -7,8 +5,8 @@ NPM = npm
 SLUG := "tbo-backend"
 
 # Colors
-YELLOW := "\033[33m"
-RESET := "\033[0m"
+YELLOW = $(shell tput -Txterm setaf 3)
+RESET = $(shell tput -Txterm sgr0)
 
 # Default target
 all: build
@@ -18,11 +16,9 @@ build:
 	$(NPM) install
 	$(NPM) run build
 
-# Start the Medusa server
 start:
 	$(NPM) start
 
-# Start the Medusa server in development mode
 dev:
 	$(NPM) run dev
 
@@ -47,10 +43,6 @@ docker-update:
 docker-down:
 	@COMPOSE_PROJECT_NAME=$(SLUG) $(DOCKER_COMPOSE) down
 
-# Build Docker images
-docker-build:
-	$(DOCKER_COMPOSE) build
-
 # Clean up node_modules and build artifacts
 clean:
 	rm -rf node_modules
@@ -73,14 +65,14 @@ precommit:
 	npx concurrently --kill-others-on-fail --prefix "[{name}]" --names "frontend:format,frontend:lint" \
 	--prefix-colors "bgRed.bold.white,bgGreen.bold.white,bgBlue.bold.white,bgYellow.bold.white" \
 	"$(NPM) run format" \
-	"$(NPM) run lint" 
+	"$(NPM) run lint"
 
 # Help target
 help:
 	@echo "Available targets:"
 	@echo "  build       - Install dependencies and build the project"
-	@echo "  start       - Start the Medusa server"
-	@echo "  dev         - Start the Medusa server in development mode"
+	@echo "  start       - Start the server"
+	@echo "  dev         - Start the server in development mode"
 	@echo "  migrate     - Run database migrations"
 	@echo "  seed        - Seed the database"
 	@echo "  docker-up   - Start Docker containers"
