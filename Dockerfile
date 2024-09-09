@@ -10,6 +10,14 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Install cross-env globally
+RUN npm install -g cross-env
+
+# Install typescript globally
+RUN npm install -g typescript
+RUN npm install -g @medusajs/medusa-cli
+RUN npm install -g @medusajs/admin
+
 # Copy the rest of the application code
 COPY . .
 

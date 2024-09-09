@@ -1,36 +1,76 @@
 services:
-  app:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.http.address=:7020
+      # - --log.level=DEBUG  # Debug logging
+    ports:
+      - 7020:7020  # HTTP entrypoint
+      - 7021:8080  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik-network
+    labels:
+      # Enable Traefik
+      - traefik.enable=true
+      # Dashboard route setup
+      - traefik.http.routers.traefik-dashboard.entrypoints=http
+      - traefik.http.routers.traefik-dashboard.rule=Host(`traefik.localhost`)
+      - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
+      - traefik.http.routers.traefik-dashboard.service=api@internal
+
+  admin:
+    container_name: admin
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - 7011:9000
-      # - 7012:7000
-      # - 7013:7001
-    command: cross-env npm run build:server
+    labels:
+      - traefik.enable=true
+      # Route traffic on port 7020 to the admin service
+      - traefik.http.routers.admin-router.entrypoints=http
+      - traefik.http.routers.admin-router.rule=Host(`admin.localhost`)
+      - traefik.http.services.admin-service.loadbalancer.server.port=7001
+      # Route traffic on port 7020 to the api service
+      # - traefik.http.routers.admin-router.entrypoints=http
+      # - traefik.http.routers.admin-router.rule=Host(`api.localhost`)
+      # - traefik.http.services.admin-service.loadbalancer.server.port=9000
+    # command: medusa develop
+    command: medusa-admin build
     volumes:
       - .:/app
       - /app/node_modules
-      # - ./data:/data
-      # - ./admin/src:/admin/src
+    networks:
+      - traefik-network
     env_file:
       - .env
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.app.rule=Host(`app.localhost`)"
-    #   - "traefik.http.routers.app.entrypoints=web"
-    #   - "traefik.http.routers.app.service=app"
-    #   - "traefik.http.services.app.loadbalancer.server.port=7000"
 
-  # traefik:
-  #   image: traefik:v2.10
-  #   ports:
-  #     - 8080:80
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   command: --api.dashboard=true --api.insecure=true --providers.docker=true
+
+  # api:
+  #   container_name: api
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
   #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
-  #     - "traefik.http.routers.traefik.entrypoints=web"
-  #     - "traefik.http.routers.traefik.service=api@internal"
+  #     - traefik.enable=true
+  #     # Route traffic on port 7020 to the api service
+  #     - traefik.http.routers.api-router.entrypoints=http
+  #     - traefik.http.routers.api-router.rule=Host(`api.localhost`)
+  #     - traefik.http.services.api-service.loadbalancer.server.port=9000
+  #   command: sh -c "cross-env npm run build:server && medusa develop"
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+
+  #   networks:
+  #     - traefik-network
+  #   env_file:
+  #     - .env
+
+
+networks:
+  traefik-network:
