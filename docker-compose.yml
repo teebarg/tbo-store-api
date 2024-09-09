@@ -24,53 +24,54 @@ services:
       - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
       - traefik.http.routers.traefik-dashboard.service=api@internal
 
-  admin:
-    container_name: admin
+  medusa-api:
+    container_name: medusa-api
     build:
       context: .
       dockerfile: Dockerfile
-    labels:
-      - traefik.enable=true
-      # Route traffic on port 7020 to the admin service
-      - traefik.http.routers.admin-router.entrypoints=http
-      - traefik.http.routers.admin-router.rule=Host(`admin.localhost`)
-      - traefik.http.services.admin-service.loadbalancer.server.port=7001
-      # Route traffic on port 7020 to the api service
-      # - traefik.http.routers.admin-router.entrypoints=http
-      # - traefik.http.routers.admin-router.rule=Host(`api.localhost`)
-      # - traefik.http.services.admin-service.loadbalancer.server.port=9000
-    # command: medusa develop
-    command: medusa-admin build
+    command: sh -c "npm run build:server && medusa start"
+    ports:
+      - 9000:9000
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ./src:/app/src
+      - ./medusa-config.js:/app/medusa-config.js
     networks:
       - traefik-network
     env_file:
       - .env
+    environment:
+      - MEDUSA_ADMIN_ONBOARDING_TYPE=update
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.medusa-api.entrypoints=http
+      - traefik.http.routers.medusa-api.rule=Host(`api.localhost`)
+      - traefik.http.services.medusa-api.loadbalancer.server.port=9000
 
-
-  # api:
-  #   container_name: api
+  # medusa-admin:
+  #   container_name: medusa-admin
   #   build:
   #     context: .
   #     dockerfile: Dockerfile
-  #   labels:
-  #     - traefik.enable=true
-  #     # Route traffic on port 7020 to the api service
-  #     - traefik.http.routers.api-router.entrypoints=http
-  #     - traefik.http.routers.api-router.rule=Host(`api.localhost`)
-  #     - traefik.http.services.api-service.loadbalancer.server.port=9000
-  #   command: sh -c "cross-env npm run build:server && medusa develop"
+  #   # command: sh -c "npm install -g @medusajs/admin && medusa-admin build --deployment && medusa develop"
+  #   command: npm run dev
+  #   ports:
+  #     - 3001:7001
   #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-
+  #     - ./src:/app/src
+  #     - ./medusa-config.js:/app/medusa-config.js
   #   networks:
   #     - traefik-network
   #   env_file:
   #     - .env
-
+  #   environment:
+  #     - MEDUSA_BACKEND_URL=http://api.localhost:7020
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.medusa-admin.entrypoints=http
+  #     - traefik.http.routers.medusa-admin.rule=Host(`admin.localhost`)
+  #     - traefik.http.services.medusa-admin.loadbalancer.server.port=7001
+  #   # depends_on:
+  #   #   - medusa-api
 
 networks:
   traefik-network:

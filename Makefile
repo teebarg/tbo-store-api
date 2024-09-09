@@ -3,6 +3,7 @@ DOCKER_COMPOSE = docker compose
 NODE = node
 NPM = npm
 SLUG := "tbo-backend"
+DOCKER_HUB := beafdocker
 
 # Colors
 YELLOW = $(shell tput -Txterm setaf 3)
@@ -59,6 +60,19 @@ lint:
 # Format the code
 format:
 	$(NPM) run format
+
+
+# Backend Deployment
+build: ## Build docker image for the project
+	@echo "$(YELLOW)Building project image...$(RESET)"
+	docker build -f Dockerfile.prod -t $(SLUG) .
+
+stage: ## Prepare postges database
+	@echo "$(YELLOW)Staging for deployment...$(RESET)"
+	docker tag $(SLUG):latest $(DOCKER_HUB)/$(SLUG):latest
+	docker push $(DOCKER_HUB)/$(SLUG):latest
+
+
 
 # Precommit with concurrency
 precommit:
