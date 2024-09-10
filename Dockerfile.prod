@@ -33,7 +33,7 @@ RUN npm install
 COPY --from=builder /app/dist ./dist
 
 RUN mkdir email_templates
-COPY email_templates .
+COPY email_templates ./email_templates
 
 # Expose the ports the app runs on
 EXPOSE 8080
