@@ -12,6 +12,7 @@ build
 # Ignore environment files
 .env
 .env.*
+env.yaml
 
 # Ignore log files
 *.log

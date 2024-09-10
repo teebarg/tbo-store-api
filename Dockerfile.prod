@@ -6,15 +6,10 @@ COPY . .
 
 RUN rm -rf node_modules
 
-# RUN apt-get update
-
-# RUN apt-get install -y python
-
-# RUN npm install -g npm@latest
-
 RUN npm install
 
 RUN npm run build
+
 
 
 # Use an official Node runtime as a parent image
@@ -37,39 +32,10 @@ RUN npm install
 
 COPY --from=builder /app/dist ./dist
 
+RUN mkdir email_templates
+COPY email_templates .
+
 # Expose the ports the app runs on
-EXPOSE 9000 8080
+EXPOSE 8080
 
-CMD ["sh", "-c", "npm run build:server && medusa start"]
-
-
-
-
-# # Use an official Node runtime as a parent image
-# FROM node:18-alpine
-
-# # Set the working directory in the container
-# WORKDIR /app
-
-# # Copy package.json and package-lock.json
-# COPY package*.json ./
-
-# # Install dependencies
-# RUN npm install
-
-# # Install cross-env globally
-# RUN npm install -g cross-env
-
-# # Install typescript globally
-# # RUN npm install -g typescript
-# RUN npm install -g @medusajs/medusa-cli
-# # RUN npm install -g @medusajs/admin
-
-# # Copy the rest of the application code
-# COPY . .
-
-# # Expose the ports the app runs on
-# EXPOSE 8080
-
-# CMD ["sh", "-c", "npm run build:server && medusa start"]
-    
+CMD ["sh", "-c", "medusa migrations run && medusa start"]

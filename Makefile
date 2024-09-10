@@ -4,6 +4,7 @@ NODE = node
 NPM = npm
 SLUG := "tbo-backend"
 DOCKER_HUB := beafdocker
+GCP_PROJECT_ID := "sigma-chemist-435211-m4"
 
 # Colors
 YELLOW = $(shell tput -Txterm setaf 3)
@@ -62,6 +63,9 @@ format:
 	$(NPM) run format
 
 
+prep:
+	npx medusa user -e teebarg01@gmail.com -p password
+
 # Backend Deployment
 build: ## Build docker image for the project
 	@echo "$(YELLOW)Building project image...$(RESET)"
@@ -72,6 +76,25 @@ stage: ## Prepare postges database
 	docker tag $(SLUG):latest $(DOCKER_HUB)/$(SLUG):latest
 	docker push $(DOCKER_HUB)/$(SLUG):latest
 
+
+deploy-gcp: ## Deploy to Google Cloud Platform
+	@echo "$(YELLOW)Deploying to GCP...$(RESET)"
+	@if [ -z "$(GCP_PROJECT_ID)" ]; then \
+		echo "$(RED)Error: GCP_PROJECT_ID is not set. Please set it in your environment.$(RESET)"; \
+		exit 1; \
+	fi
+	# @gcloud auth login
+	# @gcloud config set project $(GCP_PROJECT_ID)
+	@gcloud run deploy $(SLUG) \
+		--image $(DOCKER_HUB)/$(SLUG):latest \
+		--platform managed \
+		--region us-central1 \
+		--allow-unauthenticated \
+		--env-vars-file env.yaml \
+		--project=$(GCP_PROJECT_ID)
+	@echo "$(GREEN)Deployment completed. Please check the Google Cloud Console for details.$(RESET)"
+	@echo "$(YELLOW)If deployment fails, check container logs for more information:$(RESET)"
+	@echo "gcloud run logs read --service=$(SLUG) --project=$(GCP_PROJECT_ID)"
 
 
 # Precommit with concurrency
